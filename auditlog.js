@@ -28,20 +28,22 @@ function parseLog(fileName){
     let log = [];
     let file = createCSV.createCSV('logs').toString().split('\r\n').toString().split(",")
     for(let i = 0; i<file.length-11; i +=11){
-        console.log(file[i])
+        //console.log(file[i])
         if (file[i] !== 'Audit Record Report' && file[i] !== 'Print Time: ' && file[i] !== 'No.'){
             tenant = {};
             tenant.key = file[i+1].replace(/"/g,'');
             tenant.name = file[i+2] + " " + file[i+3];
-            console.log(file[i+5])
-            tenant.time = new Date((file[i+5] - (25567 + 2))*86400*1000);
+            //console.log(file[i+5])
+            //console.log(ExcelDateToJSDate(file[i+5]))
+            tenant.time = ExcelDateToJSDate(file[i+5])
+            //tenant.time = new Date((file[i+5] - (25567 + 2))*86400*1000);
             tenant.location = file[i+9];
             log.push(tenant);
             
         }
    
     }
-    console.log(log);
+    //console.log(log);
     return log;   
 }
 
@@ -50,7 +52,7 @@ function readLogFolder(dirName){
     let fileNames = fs.readdirSync(__dirname + '\\' + dirName);
     for(file in fileNames){
         if(path.extname(fileNames[file]) === '.csv'){
-            console.log("Reading file: " + fileNames[file]);
+            //console.log("Reading file: " + fileNames[file]);
            log = log.concat(parseLog(dirName + '\\' + fileNames[file] ))
         } else {
             console.log("ERROR - Invalid File: " + fileNames[file]);
@@ -61,9 +63,10 @@ function readLogFolder(dirName){
 
 //filter passed log
 function timeCheck(logArray,start = 20, stop = 6, key = 0, blank = false){
-    console.log(start, stop,key)
+    //console.log(start, stop,key)
     let log = logArray.filter(a=>{
-        let hour = a.time.getUTCHours()
+        let hour = a.time.getHours()
+        console.log(hour, a.time.toLocaleString())
         if (key !== '0'){
             return a.key === key;
         }   else {
@@ -92,12 +95,12 @@ function smallPrint(log){
     let output = '';
     for(let i=0;i<log.length;i++){
         if(log[i].key in small){
-            small[log[i].key].times.push(ExcelDateToJSDate(log[i].time).toUTCString('en-US') + ' - '+ log[i].location)
+            small[log[i].key].times.push([log[i].time, log[i].location])
         }else{
             let tmp = {}
             tmp.name = log[i].name;
             tmp.key = log[i].key;
-            tmp.times = [log[i].time.toUTCString('en-US') + ' - '+ log[i].location];
+            tmp.times = [[log[i].time,log[i].location]];
             //tmp.location = log[i].location;
             small[log[i].key] = tmp;
         }
@@ -108,8 +111,11 @@ function smallPrint(log){
         output += "Key: " + small[tenant].key + '\r\n';
         output += "Dates: \r\n";
         let times = small[tenant].times;
+        times = times.sort((a,b)=>{
+            return b[0] - a[0];
+        });
         for (let i=0;i<times.length;i++){
-            output += times[i] + '\r\n';
+            output += times[i][0].toLocaleString() + ' - ' + times[i][1] + '\r\n';
         }
         output += "\r\n\r\n"
 
