@@ -5,7 +5,7 @@
   "main": "auditlog.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node auditlog.js"
+    "start": "node main.js"
   },
   "author": "Chris Houser",
   "license": "ISC",

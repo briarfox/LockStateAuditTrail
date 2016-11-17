@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const prompt = require('prompt');
-const createCSV = require('./createCSV');
+//const createCSV = require('./createCSV');
 
 function ExcelDateToJSDate(serial) {
    var utc_days  = Math.floor(serial - 25569);
@@ -23,10 +23,10 @@ function ExcelDateToJSDate(serial) {
    return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
 }
 
-function parseLog(fileName){
+function parseLog(logCsv){
     //10 comma
     let log = [];
-    let file = createCSV.createCSV('logs').toString().split('\r\n').toString().split(",")
+    let file = logCsv.toString().split('\r\n').toString().split(",")
     for(let i = 0; i<file.length-11; i +=11){
         //console.log(file[i])
         if (file[i] !== 'Audit Record Report' && file[i] !== 'Print Time: ' && file[i] !== 'No.'){
@@ -123,30 +123,33 @@ function smallPrint(log){
     fs.writeFile("Bum List.txt", output);
 }
 
-function main(){
-    prompt.start();
-    prompt.get([{name: "blank",
-                default: false,
-                type: 'boolean',
-                description: "Show Blank tenants? (t/f) Default - (f)"},
-                {name: 'start',
-                default: 22,
-                type: 'number',
-                description: "Start Time 24hr clock"},
-                {name: 'stop',
-                default: 6,
-                type: 'number',
-                description: "End Time 24hr clock"},
-                {name: 'key',
-                default: 0,
-                type: 'string',
-                description: 'Search for specific key, All logs'}
-                ], function (err, result) {
-    let log = parseLog();//readLogFolder('logs');
-    let filterLog = timeCheck(log,result.start,result.stop, result.key,result.blank);
-    smallPrint(filterLog);
-  });
+exports.smallPrint = smallPrint;
+exports.parseLog = parseLog;
+exports.timeCheck = timeCheck;
+// function main(){
+//     prompt.start();
+//     prompt.get([{name: "blank",
+//                 default: false,
+//                 type: 'boolean',
+//                 description: "Show Blank tenants? (t/f) Default - (f)"},
+//                 {name: 'start',
+//                 default: 22,
+//                 type: 'number',
+//                 description: "Start Time 24hr clock"},
+//                 {name: 'stop',
+//                 default: 6,
+//                 type: 'number',
+//                 description: "End Time 24hr clock, next day"},
+//                 {name: 'key',
+//                 default: 0,
+//                 type: 'string',
+//                 description: 'Search for specific key, All logs'}
+//                 ], function (err, result) {
+//     let log = parseLog();//readLogFolder('logs');
+//     let filterLog = timeCheck(log,result.start,result.stop, result.key,result.blank);
+//     smallPrint(filterLog);
+//   });
     
-}
+// }
 
-main();
+// main();

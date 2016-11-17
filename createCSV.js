@@ -5,7 +5,7 @@ const path = require('path');
 var rows = [];
 var writeStr = "";
 
-function createCSV(folder){
+function create(folder){
     let rows = [];
     let writeStr = "";
     let fileNames = fs.readdirSync(__dirname + '\\' + folder);
@@ -53,6 +53,6 @@ function createCSV(folder){
     // });
 }
 //looping through all sheets
-exports.createCSV = createCSV;
+exports.create = create;
 
 //creates the csv string to write it to a file
