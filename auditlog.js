@@ -62,16 +62,15 @@ function readLogFolder(dirName){
 }
 
 //filter passed log
-function timeCheck(logArray,start = 20, stop = 6, key = 0, blank = false){
+function timeCheck(logArray,start = 20, stop = 24, key = 0, blank = false){
     //console.log(start, stop,key)
     let log = logArray.filter(a=>{
         let hour = a.time.getHours()
-        console.log(hour, a.time.toLocaleString())
         if (key !== '0'){
             return a.key === key;
         }   else {
-            if(!blank) return a.key !== '0300000000000000' && (hour >= start || hour <= stop) && a.name !== ' ';
-            return a.key !== '0300000000000000' && (hour >= start || hour <= stop);
+            if(!blank) return a.key !== '0300000000000000' && (hour >= start && hour <= stop) && a.name !== ' ';
+            return a.key !== '0300000000000000' && (hour >= start && hour <= stop);
         }
     });
     return log;
